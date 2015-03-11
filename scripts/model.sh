@@ -156,8 +156,9 @@ rm -f $RUNDIR/met_em.*.nc
 if [ $parallel_run = 0 ]; then
   ./wrf.exe > wrf.log 2>&1
 elif [ $parallel_run = 1 ]; then
-  module load mpi/${MPI}-$(uname -i)
-  env | grep $MPI > /dev/null
+  which mpirun
+#  module load mpi/${MPI}-$(uname -i)
+#  env | grep $MPI > /dev/null
   if [ $? = 0 ]; then
     make_hostfile_$MPI > hostfile
     nnodes=`cat hostfile | wc -l`
