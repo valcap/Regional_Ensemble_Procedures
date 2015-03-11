@@ -160,19 +160,18 @@ rm -f $RUNDIR/met_em.*.nc
 if [ $parallel_run = 0 ]; then
   ./wrf.exe > wrf.log 2>&1
 elif [ $parallel_run = 1 ]; then
+  make_hostfile_$MPI > hostfile
   MPI_BIN=`which mpirun`
-#  module load mpi/${MPI}-$(uname -i)
-#  env | grep $MPI > /dev/null
   if [ $? = 0 ]; then
-    make_hostfile_$MPI > hostfile
-    nnodes=`cat hostfile | wc -l`
-    nproc=`cat /proc/cpuinfo | grep processor | wc -l`
-    nproctot=$(( $nnodes * nproc ))
-    echo "Running wrf model on $nnodes nodes, $nproc processors, with $MPI"
-    $MPI_BIN --n $nproctot --bynode --hostfile hostfile \
-             -mca BTL SELF,OPENIB,TCP ./wrf.exe > wrf.log 2>&1
+    echo "Running wrf model with $nproctot processors and with $MPI"
+    if [ $MPI = mvapich2 ]; then
+      $MPI_BIN -wdir ./ -n $nproctot -f hostfile ./wrf.exe > wrf.log 2>&1
+    else
+      $MPI_BIN --n $nproctot --bynode --hostfile hostfile \
+             -mca BTL SELF,OPENIB,TCP ./wrf.exe > ./wrf.log 2>&1
+    fi
   else
-    echo "$MPI is missing..exiting.."; exit 1;
+    echo "opss problem with $MPI ..exiting.."; exit 1;
   fi
 else
   echo "Error in running wrf parallel/serial"; exit 1;
