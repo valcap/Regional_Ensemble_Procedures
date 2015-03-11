@@ -160,7 +160,7 @@ rm -f $RUNDIR/met_em.*.nc
 if [ $parallel_run = 0 ]; then
   ./wrf.exe > wrf.log 2>&1
 elif [ $parallel_run = 1 ]; then
-  which mpirun
+  MPI_BIN=`which mpirun`
 #  module load mpi/${MPI}-$(uname -i)
 #  env | grep $MPI > /dev/null
   if [ $? = 0 ]; then
