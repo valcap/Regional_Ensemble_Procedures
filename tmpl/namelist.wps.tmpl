@@ -1,0 +1,40 @@
+&share
+ wrf_core             = 'ARW',
+ max_dom              = NDOMAINS,
+ start_date           = 'STARTDATEd01','STARTDATEd02','STARTDATEd03',
+ end_date             = 'ENDDATEd01','ENDDATEd02','ENDDATEd03',
+ interval_seconds     = 21600
+ io_form_geogrid      = 2,
+/
+
+&geogrid
+ parent_id            = 1,   1,   2,
+ parent_grid_ratio    = 1,   3,   4,
+ i_parent_start       = 1,   67,  37,
+ j_parent_start       = 1,   25,  52,
+ e_we                 = 160, 112, 101,
+ e_sn                 = 90,  112, 101,
+ geog_data_res        = '10m', '10m', '10m'
+ dx                   = 36000,
+ dy                   = 36000,
+ map_proj             = 'lambert',
+ ref_lat              = 43.00,
+ ref_lon              = 12.50,
+ truelat1             = 43.00,
+ truelat2             = 43.00,
+ stand_lon            = 12.50,
+ geog_data_path       = 'GEOGPATH'
+ opt_geogrid_tbl_path = './',
+/
+
+&ungrib
+ out_format           = 'WPS',
+ prefix               = 'FILE',
+/
+
+&metgrid
+ opt_output_from_metgrid_path = 'RUNDIR',
+ opt_metgrid_tbl_path         = './',
+ fg_name                      = 'FILE'
+ io_form_metgrid              = 2, 
+/
