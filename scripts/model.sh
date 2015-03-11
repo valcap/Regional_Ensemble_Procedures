@@ -141,8 +141,12 @@ done
 rm -f rsl.error*
 rm -f rsl.out*
 rm -f real.log
-./real.exe  > $RUNDIR/real.log 2>&1
-result=`cat real.log | grep "SUCCESS COMPLETE"`
+  ./real.exe  > $RUNDIR/real.log 2>&1
+if [ -e rsl.error.0000 ]; then
+  result=`cat rsl.error.0000 | grep "SUCCESS COMPLETE"`
+else
+  result=`cat real.log | grep "SUCCESS COMPLETE"`
+fi
 if [ -z "$result" ]; then
   echo "Error in running real"; exit 1;
 fi
@@ -174,7 +178,11 @@ else
   echo "Error in running wrf parallel/serial"; exit 1;
 fi
 
-result=`cat wrf.log | grep "SUCCESS COMPLETE"`
+if [ -e rsl.error.0000 ]; then
+  result=`cat rsl.error.0000 | grep "SUCCESS COMPLETE"`
+else
+  result=`cat wrf.log | grep "SUCCESS COMPLETE"`
+fi
 if [ -z "$result" ]; then
   echo "Error in running wrf"; exit 1;
 fi
