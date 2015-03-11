@@ -11,36 +11,24 @@ fi
 # check os
 os=`uname`
 if [ "$os" != "Linux" ]; then
-  echo "opss this is not designede for not-Linux machines. Bye";
+  echo "opss this is not designed for not-Linux machines. Bye";
   exit 1;
 fi
 
 # check installing directory
-echo 'Installing directory is '$arg'. Okay to proceed. [y]'
+echo 'Installing directory is '$arg'. Okay to proceed? [y/n]'
 read resp
 if [ "$resp" != "y" ]; then
   echo "exit"; exit 1;
 elif [ ! -d "$arg" ]; then
-  echo "$arg is missing. Do you want to create it? [y]"
+  echo "$arg is missing. Do you want to create it? [y/n]"
   read resp
   if [ "$resp" = "y" ]; then
     mkdir -p $arg
   fi
 fi
 
-# installing stuff
-echo "Installing stuff in $arg/"
-cdir=`/usr/bin/pwd`
-/usr/bin/cp -r tmpl $arg/
-/usr/bin/cp -r scripts $arg/
-/usr/bin/mkdir -p $arg/data/input/gefs
-/usr/bin/mkdir -p $arg/data/output/grib
-/usr/bin/mkdir -p $arg/data/output/wrfout
-/usr/bin/mkdir -p $arg/log
-/usr/bin/mkdir -p $arg/preproc
-/usr/bin/mkdir -p $arg/run
-/usr/bin/mkdir -p $arg/postproc
-/usr/bin/mkdir -p $arg/env
+# check environmen WRF-related variables
 env | grep WRF_BUILD_DIR
 if [ ! $? = 0 ]; then
   echo "please do: export WRF_BUILD_DIR=where/WRF/was/compiled"; exit 1;
@@ -53,12 +41,40 @@ env | grep UNI_BUILD_DIR
 if [ ! $? = 0 ]; then
   echo "please do: export UNI_BUILD_DIR=where/UNIPOST/was/compiled"; exit 1;
 fi
-/usr/bin/cat env/gefs.env.tmpl | /usr/bin/sed -e "s!TOBEDET!${arg}!g" \
-                               | /usr/bin/sed -e "s!WPSTOBEDET!${WPS_BUILD_DIR}!g" \
-                               | /usr/bin/sed -e "s!WRFTOBEDET!${WRF_BUILD_DIR}!g" \
-                               | /usr/bin/sed -e "s!UNITOBEDET!${UNI_BUILD_DIR}!g" > $arg/env/gefs.env
+
+# installing stuff
+echo "Installing stuff in $arg/"
+CP=`which cp`
+if [ $? = 0 ]; then
+  $CP -r tmpl $arg/
+  $CP -r scripts $arg/
+else
+  echo "opss cannota find cp command"; exit;
+fi
+MKDIR=`which mkdir`
+if [ $? = 0 ]; then
+  ${MKDIR} -p $arg/data/input/gefs
+  ${MKDIR} -p $arg/data/output/grib
+  ${MKDIR} -p $arg/data/output/wrfout
+  ${MKDIR} -p $arg/log
+  ${MKDIR} -p $arg/preproc
+  ${MKDIR} -p $arg/run
+  ${MKDIR} -p $arg/postproc
+  ${MKDIR} -p $arg/env
+else
+  echo "opss cannota find mkdir command"; exit;
+fi
+CAT=`which cat`
+[ $? = 0 ] || exit 1;
+SED=`which sed`
+[ $? = 0 ] || exit 1;
+${CAT} env/gefs.env.tmpl | ${SED} -e "s!ROOTTOBEDET!${arg}!g" \
+                         | ${SED} -e "s!WPSTOBEDET!${WPS_BUILD_DIR}!g" \
+                         | ${SED} -e "s!WRFTOBEDET!${WRF_BUILD_DIR}!g" \
+                         | ${SED} -e "s!UNITOBEDET!${UNI_BUILD_DIR}!g" > $arg/env/gefs.env
 
 echo ""
 echo "done!"
 echo "first of all edit $arg/env/gefs.env!"
 echo "enjoy!"
+
