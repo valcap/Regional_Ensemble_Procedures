@@ -34,3 +34,15 @@ function make_hostfile_mvapich2 ( )
   return 0
 }
 
+function is_alive ( )
+{
+  ok=`/bin/ping -q -W 1 -c 1 $1 2> /dev/null | grep "1 received" | wc -l`
+  if [ $ok -eq 1 ]
+  then
+    echo 1
+  else
+    echo 0
+  fi
+  return 0
+}
+

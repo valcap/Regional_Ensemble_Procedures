@@ -169,8 +169,8 @@ elif [ $parallel_run = 1 ]; then
     nproc=`cat /proc/cpuinfo | grep processor | wc -l`
     nproctot=$(( $nnodes * nproc ))
     echo "Running wrf model on $nnodes nodes, $nproc processors, with $MPI"
-    $MPI_BIN/mpirun --n $nproctot --bynode --hostfile hostfile \
-                    -mca BTL SELF,OPENIB,TCP ./wrf.exe > wrf.log 2>&1
+    $MPI_BIN --n $nproctot --bynode --hostfile hostfile \
+             -mca BTL SELF,OPENIB,TCP ./wrf.exe > wrf.log 2>&1
   else
     echo "$MPI is missing..exiting.."; exit 1;
   fi
