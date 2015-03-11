@@ -76,5 +76,7 @@ ${CAT} env/gefs.env.tmpl | ${SED} -e "s!ROOTTOBEDET!${arg}!g" \
 echo ""
 echo "done!"
 echo "first of all edit $arg/env/gefs.env!"
+echo "then run sh $arg/scripts/driver_regens.sh $arg/env/gefs.env!"
+echo "and cross fingers"
 echo "enjoy!"
 
