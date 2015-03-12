@@ -166,9 +166,11 @@ elif [ $parallel_run = 1 ]; then
     echo "Running wrf model with $nproctot processors and with $MPI"
     if [ $MPI = mvapich2 ]; then
       $MPI_BIN -wdir ./ -n $nproctot -f hostfile ./wrf.exe > wrf.log 2>&1
-    else
+    elif [ $MPI = mvapich2 ]; then
       $MPI_BIN --n $nproctot --bynode --hostfile hostfile \
              -mca BTL SELF,OPENIB,TCP ./wrf.exe > ./wrf.log 2>&1
+    else
+      echo "only mvapich2 and openmpi are supported (??!!??)"; exit 1;
     fi
   else
     echo "opss problem with $MPI ..exiting.."; exit 1;
