@@ -32,14 +32,23 @@ fi
 env | grep WRF_BUILD_DIR
 if [ ! $? = 0 ]; then
   echo "please do: export WRF_BUILD_DIR=where/WRF/was/compiled"; exit 1;
+else
+  [ -e $WRF_BUILD_DIR/main/real.exe ] || echo "real.exe not existing in $WRF_BUILD_DIR/main/"; exit 1;
+  [ -e $WRF_BUILD_DIR/main/wrf.exe ] || echo "wrf.exe not existing in $WRF_BUILD_DIR/main/"; exit 1;
 fi
 env | grep WPS_BUILD_DIR
 if [ ! $? = 0 ]; then
   echo "please do: export WPS_BUILD_DIR=where/WPS/was/compiled"; exit 1;
+else
+  [ -e $WPS_BUILD_DIR/geogrid/geogrid.exe ] || echo "geogrid.exe not existing in $WPS_BUILD_DIR/geogrid/"; exit 1;
+  [ -e $WPS_BUILD_DIR/ungrib/ungrib.exe ] || echo "ungrib.exe not existing in $WPS_BUILD_DIR/ungrib/"; exit 1;
+  [ -e $WPS_BUILD_DIR/metgrid/metgrid.exe ] || echo "metgrid.exe not existing in $WPS_BUILD_DIR/metgrid/"; exit 1;
 fi
 env | grep UNI_BUILD_DIR
 if [ ! $? = 0 ]; then
   echo "please do: export UNI_BUILD_DIR=where/UNIPOST/was/compiled"; exit 1;
+else
+  [ -e $UNI_BUILD_DIR/UPPV2.*/bin/unipost.exe ] || echo "unipost.exe not existing in $UNI_BUILD_DIR/UPPV2.*/bin/unipost.exe"; exit 1;
 fi
 
 # installing stuff

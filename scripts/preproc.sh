@@ -81,7 +81,7 @@ fi
 for exe in geogrid.exe metgrid.exe ungrib.exe link_grib.csh
 do
   if [ -f $WPSROOTDIR/$exe ]; then
-    ln -svf $WPSROOTDIR/$exe $PREPDIR
+    ln -sf $WPSROOTDIR/$exe $PREPDIR
   else
     echo "Error! missing $WPSROOTDIR/$exe"; exit 1
   fi
@@ -89,7 +89,7 @@ done
 for util in g1print.exe g2print.exe rd_intermediate.exe mod_levs.exe avg_tsfc.exe calc_ecmwf_p.exe height_ukmo.exe int2nc.exe plotgrids.exe plotfmt.exe
 do
   if [ -f $WPSROOTDIR/util/$util ]; then
-    ln -svf $WPSROOTDIR/util/$util $PREPDIR
+    ln -sf $WPSROOTDIR/util/$util $PREPDIR
   else
     echo "Warning! missing $WPSROOTDIR/util/$util";
   fi
@@ -104,7 +104,7 @@ echo "link_grib.csh OK"
 
 # geogrid
 if [ ! -f $PREPDIR/GEOGRID.TBL ]; then
-  ln -svf $WPSROOTDIR/geogrid/GEOGRID.TBL.ARW $PREPDIR/GEOGRID.TBL
+  ln -sf $WPSROOTDIR/geogrid/GEOGRID.TBL.ARW $PREPDIR/GEOGRID.TBL
 fi
 ./geogrid.exe > $PREPDIR/geogrid.log 2>&1
 result=`cat $PREPDIR/geogrid.log | grep "Successful completion of geogrid"`
@@ -115,7 +115,7 @@ echo "geogrid.exe OK"
 
 # ungrib
 rm -f $PREPDIR/Vtable
-ln -svf $TBLPATH/Vtable.GFSENS $PREPDIR/Vtable
+ln -sf $TBLPATH/Vtable.GFSENS $PREPDIR/Vtable
 ./ungrib.exe > $PREPDIR/ungrib.log 2>&1
 result=`cat $PREPDIR/ungrib.log | grep "!  Successful completion of ungrib.   !"`
 if [ -z "$result" ]; then
@@ -125,7 +125,7 @@ echo "ungrib.exe OK"
 
 # metgrid
 if [ ! -f $PREPDIR/METGRID.TBL ]; then
-  ln -svf $WPSROOTDIR/metgrid/METGRID.TBL $PREPDIR/METGRID.TBL
+  ln -sf $WPSROOTDIR/metgrid/METGRID.TBL $PREPDIR/METGRID.TBL
 fi
 ./metgrid.exe > $PREPDIR/metgrid.log 2>&1
 result=`cat $PREPDIR/metgrid.log | grep "!  Successful completion of metgrid.  !"`

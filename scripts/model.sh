@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ###########################################################################
 #
 #                            LaMMA - Valerio Capecchi
@@ -90,7 +91,7 @@ actual_end_hour_d03=`date +"%H" --date "${YYYY}${MM}${DD} $run GMT + $lenght hou
 cd $RUNDIR
 for fff in `ls * | grep -v "met_em.d0*.*-*-*_*.nc"`
 do
-  rm -fv $fff
+  rm -f $fff
 done
 
 if [ ! -e $TMPLDIR/namelist.input.tmpl ]; then
@@ -128,12 +129,12 @@ cat $TMPLDIR/namelist.input.tmpl | \
     sed -e "s/actual_end_hour_d03/$actual_end_hour_d03/g" | \
     sed -e "s/INITDATE/$initdate/g" > $RUNDIR/namelist.input
 
-ln -svf $BINDIR/real.exe $RUNDIR
-ln -svf $BINDIR/wrf.exe $RUNDIR
+ln -sf $BINDIR/real.exe $RUNDIR
+ln -sf $BINDIR/wrf.exe $RUNDIR
 for needfile in $needed_files
 do
   if [ ! -f $RUNDIR/$needfile ]; then
-    ln -svf $TBLPATH_WRF/$needfile $RUNDIR
+    ln -sf $TBLPATH_WRF/$needfile $RUNDIR
   fi
 done
 
@@ -153,20 +154,23 @@ fi
 echo "real.exe OK"
 
 # wrf
-rm -f rsl.error*
-rm -f rsl.out*
+rm -f $RUNDIR/rsl.error*
+rm -f $RUNDIR/rsl.out*
 rm -f $RUNDIR/met_em.*.nc
 
 if [ $parallel_run = 0 ]; then
   ./wrf.exe > wrf.log 2>&1
 elif [ $parallel_run = 1 ]; then
   make_hostfile_$MPI > hostfile
+  nnodes=`cat hostfile | wc -l`
+  nproc=`cat /proc/cpuinfo | grep processor | wc -l`
+  nproctot=$(( $nnodes * nproc ))
   MPI_BIN=`which mpirun`
   if [ $? = 0 ]; then
     echo "Running wrf model with $nproctot processors and with $MPI"
     if [ $MPI = mvapich2 ]; then
-      $MPI_BIN -wdir ./ -n $nproctot -f hostfile ./wrf.exe > wrf.log 2>&1
-    elif [ $MPI = mvapich2 ]; then
+      $MPI_BIN -wdir $RUNDIR -n $nproctot -f hostfile ./wrf.exe > wrf.log 2>&1
+    elif [ $MPI = openmpi ]; then
       $MPI_BIN --n $nproctot --bynode --hostfile hostfile \
              -mca BTL SELF,OPENIB,TCP ./wrf.exe > ./wrf.log 2>&1
     else
@@ -176,7 +180,7 @@ elif [ $parallel_run = 1 ]; then
     echo "opss problem with $MPI ..exiting.."; exit 1;
   fi
 else
-  echo "Error in running wrf parallel/serial"; exit 1;
+  echo "Error in running wrf parallel/serial (parallel run is $parallel_run)"; exit 1;
 fi
 
 if [ -e rsl.error.0000 ]; then
