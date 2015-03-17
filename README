@@ -1,0 +1,53 @@
+# regens
+
+DESCRIPTION:
+regens is designed to run regional weather forecast based on the WRF-ARW model (http://www2.mmm.ucar.edu/wrf/users/)
+and Global Ensemble Forecast System (GEFS, http://www.emc.ncep.noaa.gov/index.php?branch=GEFS) data.
+Currently the regens procedure outputs data on the Mediterranean area. If you wish to change area of interest,
+you have to edit the files 'namelist*' files (and 'copygb*' accordingly) in the 'tmpl' directory
+
+SYSTEM REQUIREMENTS:
+* WRF Preprocessing system (WPS): see details on http://www2.mmm.ucar.edu/wrf/users/
+* WRF-ARW model: see details on http://www2.mmm.ucar.edu/wrf/users/
+* Unified Post Processor (unipost): see details on http://www.dtcenter.org/wrf-nmm/users/overview/upp_overview.php
+* openmpi or mvapich2 
+* enough space to download GEFS data (120 hours forecast needs at least 40 GB when using 20 + 1 members)
+The whole procedure was tested using:
+* x86_64 GNU/Linux, gfortran 4.7.0 and NetCDF 3.6.3
+* x86_64 GNU/Linux, Intel Fortran 12.1.5 and NetCDF 3.6.3
+Other configurations were not tested; if you are able to run the procedure on other systems, please let me know at valcap74@gmail.com
+
+INSTALL:
+* tar/unzip the source code
+* cd regens
+* you have the following dir/files:
+  configure - checks for system features and copies files and directories to the working directoy
+  - env: contains configuration parameters for the procedure
+  - scripts: contains bash procedures for WRF model runs
+  - tmpl: contains WRF configuration parameters
+* set the following environment variables by doing (sh, bash):
+  export WRF_BUILD_DIR=/where/WRF/was/compiled
+  export WPS_BUILD_DIR=/where/WPS/was/compiled
+  export UNI_BUILD_DIR=/where/unipost/was/compiled
+  or (csh)
+  setenv WRF_BUILD_DIR /where/WRF/was/compiled
+  setenv WPS_BUILD_DIR /where/WPS/was/compiled
+  setenv UNI_BUILD_DIR /where/unipost/was/compiled
+* run ./configure /path/to/where/you/want/working/directory
+
+RUN:
+* cd env
+* edit the 'gefs.env' file according to your needs (if any). The file has minimal comments, if your are in doubts write me at valcap74@gmail.com
+* cd ../scripts
+* ./driver_regens.sh ../env/gefs.env 00  # (or 06, 12, 18 UTC time)
+  The script is designed to download the GEFS data initialized at 00 UTC time (or 06, 12, 18 UTC time). When 18 is setup, the initial day is yesterday, otherwise it is today.
+  
+TODO:
+* change name to configure (something like install) and add mode if-then-else statements to check inputs
+* create a configure file where you set the domain area and other relevant environment variables
+* further test with openmpi model run
+* add other postproc capabilities (like create GrADS control file, plotting capabilities)
+
+MAINTAINER(S):
+valcap valcap74@gmail.com
+
