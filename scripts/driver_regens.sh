@@ -22,12 +22,12 @@ envfile=$1
 run=$2
 
 # Log file
-#if [ ! -d "../log" ]; then
-#  exec 1>>`basename $0 .sh`_`date +"%Y%m%d"`.log
-#else
-#  exec 1>>../log/`basename $0 .sh`_`date +"%Y%m%d"`.log
-#  exec 2>&1
-#fi
+if [ ! -d "../log" ]; then
+  exec 1>>`basename $0 .sh`_`date +"%Y%m%d"`.log
+else
+  exec 1>>../log/`basename $0 .sh`_`date +"%Y%m%d"`.log
+  exec 2>&1
+fi
 
 # Functions
 function notice {
